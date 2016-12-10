@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Promise animation</title>
+	<style type="text/css">
+		.ball{
+			width:40px;
+			height: 40px;
+			border-radius: 20px;
+		}
+		.ball1{
+			background:red;
+		}
+		.ball2{
+			background:yellow;
+		}
+		.ball3{
+			background:green;
+		}
+	</style>
+	<script src='./node_modules/bluebird/js/browser/bluebird.js'></script>
+</head>
+<body>
+	<div class="ball ball1" style="margin-left: 0"></div>
+	<div class="ball ball2" style="margin-left: 0"></div>
+	<div class="ball ball3" style="margin-left: 0"></div>
+	<script type="text/javascript">
+		var ball1 = document.querySelector('.ball1')
+		var ball2 = document.querySelector('.ball2')
+		var ball3 = document.querySelector('.ball3')
+		/*
+		function animation(ball,distance,cb){
+			setTimeout(function(){
+				var marginLeft = parseInt(ball.style.marginLeft,10)
+				if (marginLeft === distance) {
+					cb && cb()
+				}else{
+					if (marginLeft < distance) {
+						marginLeft++
+					}else{
+						marginLeft--
+					}
+					ball.style.marginLeft = marginLeft+'px'
+					animation(ball,distance,cb)
+				}
+			},13);
+		}
+		
+		animation(ball1,100,function(){
+			animation(ball2,200,function(){
+				animation(ball3,300,function(){
+					animation(ball3,150,function(){
+						animation(ball2,150,function(){
+							animation(ball1,150,function(){
+								//
+							})
+						})
+					})
+				})
+			})
+		})
+		*/
+		var Promise = window.Promise
+		function promiseAnimation(ball,distance){
+			return new Promise(function(resolve,reject){
+				function _animation(){
+					setTimeout(function(){
+						var marginLeft = parseInt(ball.style.marginLeft,10)
+						if (marginLeft === distance) {
+							resolve()
+						}else{
+							if (marginLeft < distance) {
+								marginLeft++
+							}else{
+								marginLeft--
+							}
+							ball.style.marginLeft = marginLeft+'px'
+							_animation()
+						}
+					},13)
+				}
+				_animation()
+			})
+		}
+		promiseAnimation(ball1,100)
+			.then(function(){
+				return promiseAnimation(ball2,200)
+			})
+			.then(function(){
+				return promiseAnimation(ball3,300)
+			})
+			.then(function(){
+				return promiseAnimation(ball3,150)
+			})
+			.then(function(){
+				return promiseAnimation(ball2,150)
+			})
+			.then(function(){
+				return promiseAnimation(ball1,150)
+			})
+	</script>
+</body>
+</html>
